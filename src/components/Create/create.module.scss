@@ -1,0 +1,26 @@
+.create-wrapper {
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.create-input {
+    padding-left: 20px;
+    margin: 0 auto;
+    height: 50px;
+    width: 600px;
+    border-radius: 3px;
+    border: 1px solid rgb(186, 186, 186);
+}
+
+.create-btn {
+    height: 50px;
+    width: 50px;
+    background-color: #8C47E6;
+    border: none;
+    border-radius: 2px;
+}
+
+

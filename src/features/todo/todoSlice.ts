@@ -1,0 +1,81 @@
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { TodoItem, TodoListState } from "../../types";
+
+import data from './data.json'
+
+const initialState: TodoListState = {
+    todoItems: data.todoItems,
+    selectedItems: data.selectedItems
+};
+
+export const todoSlice = createSlice({
+
+    name: 'todo',
+    initialState: initialState,
+    reducers: {
+        addTodoItem(state, action: PayloadAction<TodoItem>) {
+
+            state.todoItems.push(action.payload);
+        },
+
+        addItemToParent(state, action: PayloadAction<{parentItem: TodoItem, newItem: TodoItem}>) {
+            // console.log(action.payload);
+            addItem(state.todoItems, action.payload.parentItem.id, action.payload.newItem)
+
+        },
+        removeTodoItem(state, action: PayloadAction<string>) {
+            removeItem(state.todoItems, action.payload);
+        },
+
+        toggleSelectedItem(state, action: PayloadAction<string>) {
+            const itemId = action.payload;
+            if (state.selectedItems.includes(itemId)) {
+                state.selectedItems = state.selectedItems.filter(
+                    (selectedId) => selectedId !== itemId
+                );
+            } else {
+                state.selectedItems.push(itemId);
+            }
+        },
+        deleteSelectedItems(state) {
+            const selectedIds = state.selectedItems;
+            state.todoItems = state.todoItems.filter(
+                (item) => !selectedIds.includes(item.id)
+            );
+            state.selectedItems = [];
+        },
+    },
+});
+
+export const { addTodoItem, removeTodoItem, deleteSelectedItems, toggleSelectedItem, addItemToParent } = todoSlice.actions
+
+function removeItem(items: TodoItem[], id: string): void {
+
+    for (let i = 0; i < items.length; i++) {
+        const element = items[i];
+        if (element.id === id) {
+            items.splice(i, 1);
+            break
+        } else {
+            removeItem(element.children, id);
+        }
+    }
+}
+
+function addItem(items: TodoItem[], id: string, newItem: TodoItem): void {
+
+    for (let i = 0; i < items.length; i++) {
+        const element = items[i];
+        if (element.id === id) {
+            // items.splice(i + 1, 0, newItem);
+            element.children.push(newItem);
+            break
+        }
+        else {
+            addItem(element.children, id, newItem);
+        }
+    }
+}
+
+export default todoSlice.reducer
