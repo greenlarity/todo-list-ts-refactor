@@ -20,7 +20,6 @@ const Modal: React.FC<ModalProps> = ({ className, item}) => {
 
     const [modal, setModal] = useState<boolean>(false);
 
-
     const toggleModal = () => {
         setModal(!modal);
     }
