@@ -7,9 +7,11 @@ import styles from './item.module.scss';
 import CheckButton from '../CheckButton';
 import Modal from '../Modal/Modal';
 import { useState } from 'react';
+import { Reorder } from 'framer-motion';
 
 
-const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number}> = ({ todoItems: items, depth = 0}) => {
+const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoItems: items, depth = 0 }) => {
+
 
     const [expanded, setExpanded] = useState<boolean>(false);
     const dispatch = useAppDispatch();
@@ -31,7 +33,7 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number}> = ({ todoItem
     return (
         <>
             {items.map(item => (
-                <div key={item.id}>
+                <Reorder.Item key={item.id} value={item}>
                     <div className={styles.item} style={{ paddingLeft }}>
                         <CheckButton
                             onChange={() => handleCheckboxChange(item.id)}
@@ -40,11 +42,12 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number}> = ({ todoItem
                         <p className={styles.text}>
                             {item.title}
                         </p>
-                        <p>{item.id}</p>
+                        {item.children && item.children.length > 0 && (
+                            <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
+                        )}
 
-                        <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded? '^' : 'V'}</button>
 
-                        <Modal className={styles['item-btn']} item={item}/>
+                        <Modal className={styles['item-btn']} item={item} />
 
                         <button
                             onClick={() => handleDelete(item.id)}
@@ -65,9 +68,10 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number}> = ({ todoItem
                                 todoItems={item.children}
                                 depth={depth + 1}
                             />
+
                         </div>
                     )}
-                </div>
+                </Reorder.Item>
             ))}
         </>
     )
