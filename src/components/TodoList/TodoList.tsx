@@ -1,7 +1,7 @@
 import { TodoItem } from "../../types";
 import TodoElem from "../TodoItem/TodoElem";
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { Reorder } from 'framer-motion';
+import { Reorder, AnimatePresence } from 'framer-motion';
 import { reorderItems, todoItems } from '../../features/todo/todoSlice';
 
 const TodoList: React.FC<{ todoItems: TodoItem[] }> = ({ todoItems: items }) => {
@@ -15,7 +15,10 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = ({ todoItems: items }) => 
 
     return (
         <Reorder.Group axis='y' values={stateTodoItems} onReorder={handleReorder}>
-            <TodoElem todoItems={items} />
+            <AnimatePresence>
+                <TodoElem todoItems={items} />
+
+            </AnimatePresence>
         </Reorder.Group>
     )
 };

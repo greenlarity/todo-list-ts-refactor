@@ -7,7 +7,23 @@ import styles from './item.module.scss';
 import CheckButton from '../CheckButton';
 import Modal from '../Modal/Modal';
 import { useState } from 'react';
-import { Reorder } from 'framer-motion';
+import { Reorder, easeOut, motion } from 'framer-motion';
+
+const variants = {
+    initial: {
+        opacity: 0,
+        height: 0,
+    },
+    animate: {
+        opacity: 1,
+        height: 'auto',
+    },
+    exit: {
+        opacity: 0,
+        height: 0,
+        transition: { easeOut }
+    }
+}
 
 
 const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoItems: items, depth = 0 }) => {
@@ -33,34 +49,44 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
     return (
         <>
             {items.map(item => (
-                <Reorder.Item key={item.id} value={item}>
-                    <div className={styles.item} style={{ paddingLeft }}>
-                        <CheckButton
-                            onChange={() => handleCheckboxChange(item.id)}
-                            className={styles.checkbox}
-                        />
-                        <p className={styles.text}>
-                            {item.title}
-                        </p>
-                        {item.children && item.children.length > 0 && (
-                            <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
-                        )}
-
-
-                        <Modal className={styles['item-btn']} item={item} />
-
-                        <button
-                            onClick={() => handleDelete(item.id)}
-                            type="button"
-                            className={styles['item-btn']}
-                        >
-                            <FontAwesomeIcon
-                                size='2x'
-                                color='white'
-                                icon={faTrashAlt}
+                // <Reorder.Item key={item.id} value={item} >
+                <motion.div
+                    key={item.id}
+                    variants={variants}
+                    animate='animate'
+                    initial='initial'
+                    exit='exit'
+                    className={styles['item-containter']}
+                >
+                    <Reorder.Item key={item.id} value={item} >
+                        <div className={styles.item} style={{ paddingLeft }}>
+                            <CheckButton
+                                onChange={() => handleCheckboxChange(item.id)}
+                                className={styles.checkbox}
                             />
-                        </button>
-                    </div>
+                            <p className={styles.text}>
+                                {item.title}
+                            </p>
+                            {item.children && item.children.length > 0 && (
+                                <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
+                            )}
+
+                            <Modal className={styles['item-btn']} item={item} />
+
+                            <button
+                                onClick={() => handleDelete(item.id)}
+                                type="button"
+                                className={styles['item-btn']}
+                            >
+                                <FontAwesomeIcon
+                                    size='2x'
+                                    color='white'
+                                    icon={faTrashAlt}
+                                />
+                            </button>
+                        </div>
+                    </Reorder.Item>
+
 
                     {expanded && item.children && item.children.length > 0 && (
                         <div className={styles['item-children']}>
@@ -71,8 +97,12 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
 
                         </div>
                     )}
-                </Reorder.Item>
+
+                </motion.div>
+
+                // </Reorder.Item>
             ))}
+
         </>
     )
 };
