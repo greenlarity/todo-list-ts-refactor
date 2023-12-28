@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { TodoItem, TodoListState } from "../../types";
 
 import data from './data.json'
+import { RootState } from '../../store/store';
 
 const initialState: TodoListState = {
     todoItems: data.todoItems,
@@ -45,10 +46,13 @@ export const todoSlice = createSlice({
             );
             state.selectedItems = [];
         },
+        reorderItems: (state, action: PayloadAction<TodoItem[]>) => {
+            state.todoItems = action.payload;
+        }
     },
 });
 
-export const { addTodoItem, removeTodoItem, deleteSelectedItems, toggleSelectedItem, addItemToParent } = todoSlice.actions
+export const { addTodoItem, removeTodoItem, deleteSelectedItems, toggleSelectedItem, addItemToParent, reorderItems } = todoSlice.actions
 
 function removeItem(items: TodoItem[], id: string): void {
 
@@ -77,5 +81,7 @@ function addItem(items: TodoItem[], id: string, newItem: TodoItem): void {
         }
     }
 }
+
+export const todoItems = (state: RootState) => state.todo.todoItems;
 
 export default todoSlice.reducer
