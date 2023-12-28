@@ -1,5 +1,3 @@
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { removeTodoItem, toggleSelectedItem } from '../../features/todo/todoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
 import { TodoItem } from "../../types";
@@ -8,6 +6,7 @@ import CheckButton from '../CheckButton';
 import Modal from '../Modal/Modal';
 import { useState } from 'react';
 import { Reorder, easeOut, motion } from 'framer-motion';
+
 
 const variants = {
     initial: {
@@ -28,7 +27,6 @@ const variants = {
 
 const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoItems: items, depth = 0 }) => {
 
-
     const [expanded, setExpanded] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
@@ -44,12 +42,12 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
         setExpanded(!expanded)
     }
 
+
     const paddingLeft = `${1 * depth}rem`;
 
     return (
         <>
             {items.map(item => (
-                // <Reorder.Item key={item.id} value={item} >
                 <motion.div
                     key={item.id}
                     variants={variants}
@@ -58,15 +56,20 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                     exit='exit'
                     className={styles['item-containter']}
                 >
-                    <Reorder.Item key={item.id} value={item} >
+                    <Reorder.Item
+                        key={item.id}
+                        value={item}
+                    >
                         <div className={styles.item} style={{ paddingLeft }}>
                             <CheckButton
                                 onChange={() => handleCheckboxChange(item.id)}
                                 className={styles.checkbox}
                             />
+
                             <p className={styles.text}>
                                 {item.title}
                             </p>
+
                             {item.children && item.children.length > 0 && (
                                 <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
                             )}
@@ -78,15 +81,10 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                                 type="button"
                                 className={styles['item-btn']}
                             >
-                                <FontAwesomeIcon
-                                    size='2x'
-                                    color='white'
-                                    icon={faTrashAlt}
-                                />
+                                <img src="/src/assets/trash-can-50.png" alt="Trash can" />
                             </button>
                         </div>
                     </Reorder.Item>
-
 
                     {expanded && item.children && item.children.length > 0 && (
                         <div className={styles['item-children']}>
@@ -97,12 +95,8 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
 
                         </div>
                     )}
-
                 </motion.div>
-
-                // </Reorder.Item>
             ))}
-
         </>
     )
 };
