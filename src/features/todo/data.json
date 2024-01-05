@@ -1,12 +1,6 @@
 {
-    "todoItems": [
-        {
-            "id": "Parent",
-            "title": "Parent",
-            "children": [
-            ]
-        }
-    ],
-    "selectedItems": []
+    "todoItems": [],
+    "selectedItems": [],
+    "closedItems": []
 }
 

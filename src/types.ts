@@ -1,13 +1,14 @@
 export interface TodoItem {
     id: string,
     title: string,
-    completed?: boolean,
-    children: TodoItem[]
+    children: TodoItem[],
+    status: string
 }
 
 export interface TodoListState {
     todoItems: TodoItem[],
     selectedItems: string[],
+    closedItems: TodoItem[],
 }
 
 export interface SubtaskState {

@@ -1,7 +1,6 @@
-@import '/src/helpers/colors.module.scss';
+@import "/src/helpers/colors.module.scss";
 
 .header {
-    // max-width: 1440px;
     font-size: 32px;
     color: $black;
     display: flex;
@@ -9,11 +8,16 @@
     width: 40rem;
     margin: 0 auto;
     align-items: center;
-    padding-top: 1.9rem;
-    border-radius: 0.5rem;
+    padding: 0 15px;
     margin-bottom: 10rem;
 
     &__title {
         letter-spacing: 1.3rem;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .header {
+        max-width: 25rem;
     }
 }
