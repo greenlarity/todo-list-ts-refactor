@@ -3,8 +3,11 @@ import TodoElem from "../TodoItem/TodoElem";
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import { reorderItems, todoItems } from '../../features/todo/todoSlice';
+import { useState } from 'react';
+import FilterTask from '../FilterTasks/FilterTask';
 
-const TodoList: React.FC<{ todoItems: TodoItem[] }> = ({ todoItems: items }) => {
+const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
+    const [filterType, setFilterType] = useState('opened');
 
     const dispatch = useAppDispatch();
     const stateTodoItems = useAppSelector(todoItems);
@@ -13,13 +16,22 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = ({ todoItems: items }) => 
         dispatch(reorderItems(newItems));
     }
 
-    return (
-        <Reorder.Group axis='y' values={stateTodoItems} onReorder={handleReorder}>
-            <AnimatePresence>
-                <TodoElem todoItems={items} />
+    const filteredItems = stateTodoItems.filter(item => {
+        return filterType.toLowerCase() === 'opened' ? item.status === 'opened' :
+            filterType.toLowerCase() === 'closed' ? item.status === 'closed' :
+                true;
+    });
 
-            </AnimatePresence>
-        </Reorder.Group>
+    return (
+        <>
+            <FilterTask setFilterType={setFilterType} />
+            <Reorder.Group axis='y' values={filteredItems} onReorder={handleReorder}>
+                <AnimatePresence>
+                    <TodoElem todoItems={filteredItems} />
+                </AnimatePresence>
+            </Reorder.Group>
+        </>
+
     )
 };
 

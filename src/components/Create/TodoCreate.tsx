@@ -16,7 +16,7 @@ const TodoCreate: React.FC = () => {
                 children: [],
                 id: Math.floor(Math.random() * 100).toString(),
                 title: textValue,
-                completed: false,
+                status: 'opened',
             }
             dispatch(addTodoItem(newItem))
             setTextValue('');

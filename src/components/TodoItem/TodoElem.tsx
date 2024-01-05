@@ -1,4 +1,4 @@
-import { removeTodoItem, toggleSelectedItem } from '../../features/todo/todoSlice';
+import { closedSelectedItems, removeTodoItem, todoItems, toggleSelectedItem } from '../../features/todo/todoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
 import { TodoItem } from "../../types";
 import styles from './item.module.scss';
@@ -28,14 +28,24 @@ const variants = {
 const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoItems: items, depth = 0 }) => {
 
     const [expanded, setExpanded] = useState<boolean>(false);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const dispatch = useAppDispatch();
 
     const handleDelete = (id: string): void => {
-        dispatch(removeTodoItem(id))
+        dispatch(removeTodoItem(id));
+
     }
 
     const handleCheckboxChange = (id: string): void => {
         dispatch(toggleSelectedItem(id));
+
+        setSelectedIds(selectedIds => {
+            if (selectedIds.includes(id)) {
+                return selectedIds.filter(itemId => itemId !== id);
+            } else {
+                return [...selectedIds, id];
+            }
+        });
     };
 
     const handleExpandToggle = (): void => {
@@ -73,16 +83,21 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                             {item.children && item.children.length > 0 && (
                                 <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
                             )}
+                            
+                            {selectedIds.includes(item.id) ? null : <Modal className={styles['item-btn']} item={item} />}
 
-                            <Modal className={styles['item-btn']} item={item} />
+                            {!selectedIds.includes(item.id) && (
+                                <button
+                                    onClick={() => handleDelete(item.id)}
+                                    type="button"
+                                    className={styles['item-btn']}
+                                >
+                                    <img src="/src/assets/trash-can-50.png" alt="Trash can" />
+                                </button>
+                            )}
 
-                            <button
-                                onClick={() => handleDelete(item.id)}
-                                type="button"
-                                className={styles['item-btn']}
-                            >
-                                <img src="/src/assets/trash-can-50.png" alt="Trash can" />
-                            </button>
+
+
                         </div>
                     </Reorder.Item>
 
