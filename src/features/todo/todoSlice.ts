@@ -54,7 +54,8 @@ export const todoSlice = createSlice({
                 if (selectedIds.includes(item.id)) {
                     return {
                         ...item,
-                        status: 'closed'
+                        status: 'closed',
+                        isClosed: true
                     };
                 }
                 return item;

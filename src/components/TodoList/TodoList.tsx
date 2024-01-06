@@ -25,11 +25,16 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
     return (
         <>
             <FilterTask setFilterType={setFilterType} />
-            <Reorder.Group axis='y' values={filteredItems} onReorder={handleReorder}>
-                <AnimatePresence>
-                    <TodoElem todoItems={filteredItems} />
-                </AnimatePresence>
-            </Reorder.Group>
+            {filteredItems.length > 0 ? (
+                <Reorder.Group axis='y' values={filteredItems} onReorder={handleReorder}>
+                    <AnimatePresence>
+                        <TodoElem todoItems={filteredItems} />
+                    </AnimatePresence>
+                </Reorder.Group>
+            ) : (
+                <p style={{margin: '0 auto', paddingTop: '100px', color: 'grey'}}>{filterType === 'opened' ? 'No opened tasks' : 'No closed tasks'}</p>
+            )}
+
         </>
 
     )

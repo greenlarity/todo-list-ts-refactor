@@ -13,7 +13,7 @@ const FilterTask: React.FC<FilterTaskProps> = ({ setFilterType }) => {
         <>
             <form className={styles.container}>
                 <div className={styles.filter}>
-                    <select onChange={handleFilterChange}>
+                    <select className={styles.select} onChange={handleFilterChange}>
                         <option value="opened">Opened</option>
                         <option value="closed">Closed</option>
                     </select>

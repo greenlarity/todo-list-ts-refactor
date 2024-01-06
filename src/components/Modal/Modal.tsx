@@ -36,8 +36,9 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
         const newItem: TodoItem = {
             id: Math.floor(Math.random() * 100).toString(),
             title: currentTaskValue,
-            completed: false,
-            children: []
+            children: [],
+            status: 'opened'
+            
         }
         if (currentTaskValue === '') {
             setShowError(true);
@@ -54,7 +55,7 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
     return (
         <>
             <button onClick={toggleModal} className={className}>
-                <img src="/src/assets/plus-50.png" alt="Add item" />
+                <img src="/src/assets/add-button.png" alt="Add item" />
             </button>
 
             {modal && (

@@ -1,4 +1,4 @@
-import { closedSelectedItems, removeTodoItem, todoItems, toggleSelectedItem } from '../../features/todo/todoSlice';
+import { removeTodoItem, toggleSelectedItem } from '../../features/todo/todoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
 import { TodoItem } from "../../types";
 import styles from './item.module.scss';
@@ -33,7 +33,6 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
 
     const handleDelete = (id: string): void => {
         dispatch(removeTodoItem(id));
-
     }
 
     const handleCheckboxChange = (id: string): void => {
@@ -52,7 +51,6 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
         setExpanded(!expanded)
     }
 
-
     const paddingLeft = `${1 * depth}rem`;
 
     return (
@@ -69,35 +67,45 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                     <Reorder.Item
                         key={item.id}
                         value={item}
+                        drag={item.status === 'opened'}
+
                     >
                         <div className={styles.item} style={{ paddingLeft }}>
-                            <CheckButton
-                                onChange={() => handleCheckboxChange(item.id)}
-                                className={styles.checkbox}
-                            />
+                            {item.status === 'opened' && (
+                                <CheckButton
+                                    onChange={() => handleCheckboxChange(item.id)}
+                                    className={styles.checkbox}
+                                />
+                            )}
 
                             <p className={styles.text}>
                                 {item.title}
                             </p>
 
                             {item.children && item.children.length > 0 && (
-                                <button className={styles['item-btn']} onClick={handleExpandToggle}>{expanded ? '^' : 'V'}</button>
+                                <button
+                                    className={styles['item-btn']}
+                                    onClick={handleExpandToggle}>
+                                    {expanded ? <img src='/src/assets/icon-up-arrow.png' /> : <img src='/src/assets/icon-arrow-down.png' />}
+                                </button>
                             )}
-                            
-                            {selectedIds.includes(item.id) ? null : <Modal className={styles['item-btn']} item={item} />}
 
-                            {!selectedIds.includes(item.id) && (
+                            {item.status === 'opened' && !selectedIds.includes(item.id) &&
+                                <Modal
+                                    className={styles['item-btn']}
+                                    item={item}
+                                />
+                            }
+
+                            {item.status === 'opened' && !selectedIds.includes(item.id) && (
                                 <button
                                     onClick={() => handleDelete(item.id)}
                                     type="button"
                                     className={styles['item-btn']}
                                 >
-                                    <img src="/src/assets/trash-can-50.png" alt="Trash can" />
+                                    <img src="/src/assets/bin.png" alt="Trash can" />
                                 </button>
                             )}
-
-
-
                         </div>
                     </Reorder.Item>
 
@@ -107,7 +115,6 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                                 todoItems={item.children}
                                 depth={depth + 1}
                             />
-
                         </div>
                     )}
                 </motion.div>
