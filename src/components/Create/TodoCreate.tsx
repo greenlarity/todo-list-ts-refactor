@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './create.module.scss';
 import { TodoItem } from '../../types';
 
 import { useAppDispatch } from '../../hooks/hooks';
 import { addTodoItem } from '../../features/todo/todoSlice';
+import Popup from '../Popup/Popup';
 
 const TodoCreate: React.FC = () => {
     const [textValue, setTextValue] = useState<string>('');
     const dispatch = useAppDispatch();
+    const [showPopup, setShowPopup] = useState(false);
+
 
     const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -20,6 +23,7 @@ const TodoCreate: React.FC = () => {
             }
             dispatch(addTodoItem(newItem))
             setTextValue('');
+            setShowPopup(true);
         }
         else { alert("Нельзя вводить пустой текст") }
 
@@ -29,10 +33,19 @@ const TodoCreate: React.FC = () => {
         setTextValue(e.currentTarget.value);
     }
 
+    useEffect(() => {
+        if (showPopup) {
+            const timeout = setTimeout(() => {
+                setShowPopup(false);
+            }, 3000);
+            return () => clearTimeout(timeout);
+        }
+    }, [showPopup]);
+
     return (
         <>
             <form className={styles['create-wrapper']}
-            onSubmit={handleAddTodo}>
+                onSubmit={handleAddTodo}>
                 <input
                     className={styles['create-input']}
                     type="text"
@@ -41,6 +54,9 @@ const TodoCreate: React.FC = () => {
                     onChange={handleInput}
                 />
             </form>
+            {showPopup && (
+                <Popup showAnimation={true}/>
+            )}
         </>
 
     )
