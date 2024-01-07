@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './create.module.scss';
 import { TodoItem } from '../../types';
-
 import { useAppDispatch } from '../../hooks/hooks';
 import { addTodoItem } from '../../features/todo/todoSlice';
-import Popup from '../Popup/Popup';
+import { useSnackbar } from 'notistack';
+
 
 const TodoCreate: React.FC = () => {
     const [textValue, setTextValue] = useState<string>('');
     const dispatch = useAppDispatch();
-    const [showPopup, setShowPopup] = useState(false);
-
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -23,27 +22,24 @@ const TodoCreate: React.FC = () => {
             }
             dispatch(addTodoItem(newItem))
             setTextValue('');
-            setShowPopup(true);
+            enqueueSnackbar('Task added successfully',
+                {
+                    variant: 'success',
+                    anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+                    style: { backgroundColor: '#00bfff', color: 'white' },
+                });
+
         }
         else { alert("Нельзя вводить пустой текст") }
-
     }
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>): void => {
         setTextValue(e.currentTarget.value);
     }
 
-    useEffect(() => {
-        if (showPopup) {
-            const timeout = setTimeout(() => {
-                setShowPopup(false);
-            }, 3000);
-            return () => clearTimeout(timeout);
-        }
-    }, [showPopup]);
-
     return (
         <>
+
             <form className={styles['create-wrapper']}
                 onSubmit={handleAddTodo}>
                 <input
@@ -54,9 +50,6 @@ const TodoCreate: React.FC = () => {
                     onChange={handleInput}
                 />
             </form>
-            {showPopup && (
-                <Popup showAnimation={true}/>
-            )}
         </>
 
     )

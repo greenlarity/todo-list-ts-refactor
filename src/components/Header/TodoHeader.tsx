@@ -20,14 +20,12 @@ const TodoHeader: React.FC = () => {
     };
 
 
-    // console.log(context);
     return (
         <div className={styles.header}>
             <h1 className={styles['header__title']}>TODO</h1>
-            {/* <button onClick={toggleTheme}>Theme</button> */}
             <div
                 className={styles.switch}
-                data-isOn={isOn}
+                data-ison={isOn}
                 onClick={toggleSwitch}
             >
                 <motion.div className={styles.handle} layout transition={spring} />

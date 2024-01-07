@@ -1,7 +1,7 @@
 import { createContext, useState } from 'react';
 import styles from './global.module.scss';
 import TodoPage from './pages/Todo';
-
+import { SnackbarProvider } from 'notistack';
 
 
 export const Theme = createContext<{ theme: string; toggleTheme: () => void }>({
@@ -20,10 +20,12 @@ function App() {
     return (
         <>
             <Theme.Provider value={{ theme, toggleTheme }}>
-                <div className={styles[theme]}>
+                <SnackbarProvider>
+                    <div className={styles[theme]}>
 
-                    <TodoPage />
-                </div>
+                        <TodoPage />
+                    </div>
+                </SnackbarProvider>
 
             </Theme.Provider>
 
