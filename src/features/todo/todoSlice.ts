@@ -11,8 +11,6 @@ const initialState: TodoListState = {
     closedItems: data.closedItems,
 };
 
-
-
 export const todoSlice = createSlice({
 
     name: 'todo',
@@ -65,6 +63,7 @@ export const todoSlice = createSlice({
         },
         reorderItems: (state, action: PayloadAction<TodoItem[]>) => {
             state.todoItems = action.payload;
+            // console.log(state.todoItems);
         }
     },
 });

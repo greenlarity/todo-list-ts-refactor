@@ -5,7 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import { reorderItems, todoItems } from '../../features/todo/todoSlice';
 import { useState } from 'react';
 import FilterTask from '../FilterTasks/FilterTask';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DraggableLocation, DropResult } from 'react-beautiful-dnd';
 
 
 
@@ -22,29 +22,54 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
                 true;
     });
 
+    const moveNestedItem = (items: TodoItem[], source: DraggableLocation, destination: DraggableLocation): TodoItem[] => {
+        const updatedItems = items.map((item) => {
+            if (item.id === source.droppableId) {
+                if (source.droppableId === destination.droppableId) {
+                    const updatedChildren = Array.from(item.children);
+                    const [removed] = updatedChildren.splice(source.index, 1);
+                    updatedChildren.splice(destination.index, 0, removed);
+                    return { ...item, children: updatedChildren };
+                } else {
+                    return item;
+                }
+            } else if (item.children.length > 0) {
+                // Рекурсивное перемещение вложенных элементов
+                const updatedChildren = moveNestedItem(item.children, source, destination);
+                return { ...item, children: updatedChildren };
+            }
+            return item;
+        });
+        return updatedItems;
+    };
+
     const onDragEnd = (result: DropResult) => {
         if (!result.destination) {
             return;
         }
-
+        const { source, destination, type } = result;
         const items = Array.from(stateTodoItems);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-        dispatch(reorderItems(items));
-        console.log(result.destination.index);
-    }
+
+        if (type === 'TASK') {
+            const [reorderedItem] = items.splice(source.index, 1);
+            items.splice(destination.index, 0, reorderedItem);
+            dispatch(reorderItems(items));
+        } else {
+            const updatedItems = moveNestedItem(items, source, destination);
+            dispatch(reorderItems(updatedItems));
+        }
+    };
 
     return (
         <>
-
             <FilterTask setFilterType={setFilterType} />
-
             {filteredItems.length > 0 ? (
                 <DragDropContext
                     onDragEnd={onDragEnd}
                 >
                     <AnimatePresence>
-                        <TodoElem todoItems={filteredItems} />
+                        <TodoElem items={filteredItems} />
+
                     </AnimatePresence>
                 </DragDropContext>
 
@@ -54,6 +79,6 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
         </>
 
     )
-};
+}
 
 export default TodoList;

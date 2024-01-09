@@ -25,7 +25,8 @@ const variants = {
   }
 }
 
-const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoItems: items, depth = 0 }) => {
+const TodoElem: React.FC<{ items: TodoItem[], depth?: number }> = ({ items, depth = 0 }) => {
+
 
   const paddingLeft = `${1 * depth}rem`;
 
@@ -54,15 +55,14 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
     setExpanded(!expanded)
   }
 
-
-
   return (
     <>
-      <Droppable droppableId='parentDroppableId'>
-        {(parentProvided) => (
-          <div ref={parentProvided.innerRef} {...parentProvided.droppableProps}>
+
+      <Droppable droppableId={`droppable-${depth}`} type="TASK">
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
             {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
+              <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={expanded}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -117,37 +117,47 @@ const TodoElem: React.FC<{ todoItems: TodoItem[], depth?: number }> = ({ todoIte
                     </motion.div>
 
                     {expanded && item.children && item.children.length > 0 && (
-                      <Droppable droppableId={`nestedDroppableId-${item.id}`}>
-                        {(nestedProvided) => (
-                          <div ref={nestedProvided.innerRef} {...nestedProvided.droppableProps}>
+                      <Droppable droppableId={item.id} type="SUBTASK">
+                        {(provided) => (
+                          <div ref={provided.innerRef} {...provided.droppableProps}>
                             {item.children.map((childItem, childIndex) => (
                               <Draggable key={childItem.id} draggableId={childItem.id} index={childIndex}>
                                 {(provided) => (
+
                                   <div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className={styles['item-children']}
+                                    key={childItem.id}
                                   >
-                                    <TodoElem
-                                      todoItems={[childItem]}
-                                      depth={depth + 2.5}
-                                    />
+                                    <div className={styles.item} style={{ paddingLeft: `${1 * (depth + 1)}rem` }} key={item.id}>
+                                      {childItem.status === 'opened' && (
+                                        <CheckButton
+                                          onChange={() => handleCheckboxChange(childItem.id)}
+                                          className={styles.checkbox}
+                                        />
+                                      )}
+                                      <p className={styles.text}>
+                                        {childItem.title}
+                                      </p>
+                                      {/* Другие элементы управления... */}
+                                    </div>
                                   </div>
                                 )}
                               </Draggable>
                             ))}
-                            {nestedProvided.placeholder}
+                            {provided.placeholder}
                           </div>
                         )}
                       </Droppable>
+
                     )}
 
                   </div>
                 )}
               </Draggable>
             ))}
-            {parentProvided.placeholder}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>
