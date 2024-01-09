@@ -13,8 +13,8 @@ const Todo: React.FC = () => {
         <div className={styles.container}>
             <TodoHeader />
             <TodoCreate />
-            <TodoList todoItems={tasks} />
-            <Footer/>
+                <TodoList todoItems={tasks} />
+            <Footer />
         </div>
     );
 };

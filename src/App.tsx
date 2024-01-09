@@ -22,7 +22,6 @@ function App() {
             <Theme.Provider value={{ theme, toggleTheme }}>
                 <SnackbarProvider>
                     <div className={styles[theme]}>
-
                         <TodoPage />
                     </div>
                 </SnackbarProvider>

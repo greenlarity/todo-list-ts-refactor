@@ -1,10 +1,13 @@
 import { TodoItem } from "../../types";
 import TodoElem from "../TodoItem/TodoElem";
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { Reorder, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { reorderItems, todoItems } from '../../features/todo/todoSlice';
 import { useState } from 'react';
 import FilterTask from '../FilterTasks/FilterTask';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+
+
 
 const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
     const [filterType, setFilterType] = useState('opened');
@@ -12,9 +15,6 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
     const dispatch = useAppDispatch();
     const stateTodoItems = useAppSelector(todoItems);
 
-    const handleReorder = (newItems: TodoItem[]) => {
-        dispatch(reorderItems(newItems));
-    }
 
     const filteredItems = stateTodoItems.filter(item => {
         return filterType.toLowerCase() === 'opened' ? item.status === 'opened' :
@@ -22,19 +22,35 @@ const TodoList: React.FC<{ todoItems: TodoItem[] }> = () => {
                 true;
     });
 
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const items = Array.from(stateTodoItems);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        dispatch(reorderItems(items));
+        console.log(result.destination.index);
+    }
+
     return (
         <>
+
             <FilterTask setFilterType={setFilterType} />
+
             {filteredItems.length > 0 ? (
-                <Reorder.Group axis='y' values={filteredItems} onReorder={handleReorder}>
+                <DragDropContext
+                    onDragEnd={onDragEnd}
+                >
                     <AnimatePresence>
                         <TodoElem todoItems={filteredItems} />
                     </AnimatePresence>
-                </Reorder.Group>
-            ) : (
-                <p style={{margin: '0 auto', paddingTop: '100px', color: 'grey'}}>{filterType === 'opened' ? 'No opened tasks' : 'No closed tasks'}</p>
-            )}
+                </DragDropContext>
 
+            ) : (
+                <p style={{ margin: '0 auto', paddingTop: '100px', color: 'grey' }}>{filterType === 'opened' ? 'No opened tasks' : 'No closed tasks'}</p>
+            )}
         </>
 
     )
