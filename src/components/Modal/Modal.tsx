@@ -5,6 +5,7 @@ import { selectTask, setTaskValue } from '../../features/todo/subtaskSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { addItemToParent } from '../../features/todo/todoSlice';
 import { TodoItem } from '../../types';
+import { useSnackbar } from 'notistack';
 
 
 type ModalProps = {
@@ -18,6 +19,8 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
     const [showError, setShowError] = useState<boolean>(false);
     const currentTaskValue = useAppSelector(selectTask);
     const dispatch = useAppDispatch();
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const [modal, setModal] = useState<boolean>(false);
 
@@ -36,8 +39,9 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
         const newItem: TodoItem = {
             id: Math.floor(Math.random() * 100).toString(),
             title: currentTaskValue,
-            completed: false,
-            children: []
+            children: [],
+            status: 'opened'
+
         }
         if (currentTaskValue === '') {
             setShowError(true);
@@ -47,6 +51,12 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
             dispatch(addItemToParent({ parentItem: item, newItem: newItem }));
             toggleModal();
             setShowError(false);
+            enqueueSnackbar('Task added successfully',
+                {
+                    variant: 'success',
+                    anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+                    style: { backgroundColor: '#00bfff', color: 'white' },
+                });
         }
 
     }
@@ -54,11 +64,11 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
     return (
         <>
             <button onClick={toggleModal} className={className}>
-                <img src="/src/assets/plus-50.png" alt="Add item" />
+                <img src="/src/assets/add-button.png" alt="Add item" />
             </button>
 
             {modal && (
-                <div className={styles.modal}>
+                <form className={styles.modal}>
                     <div className={styles.overlay} onClick={toggleModal}></div>
                     <div className={styles['modal-content']}>
                         <h2 className={styles['modal-title']}>Добавить подзадачу</h2>
@@ -73,7 +83,7 @@ const Modal: React.FC<ModalProps> = ({ className, item }) => {
                             <img src="/src/assets/close-50.png" alt="Close" />
                         </button>
                     </div>
-                </div>
+                </form>
             )}
 
         </>

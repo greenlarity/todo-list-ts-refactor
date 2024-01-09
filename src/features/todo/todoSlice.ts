@@ -7,7 +7,8 @@ import { RootState } from '../../store/store';
 
 const initialState: TodoListState = {
     todoItems: data.todoItems,
-    selectedItems: data.selectedItems
+    selectedItems: data.selectedItems,
+    closedItems: data.closedItems,
 };
 
 export const todoSlice = createSlice({
@@ -20,8 +21,7 @@ export const todoSlice = createSlice({
             state.todoItems.push(action.payload);
         },
 
-        addItemToParent(state, action: PayloadAction<{parentItem: TodoItem, newItem: TodoItem}>) {
-            // console.log(action.payload);
+        addItemToParent(state, action: PayloadAction<{ parentItem: TodoItem, newItem: TodoItem }>) {
             addItem(state.todoItems, action.payload.parentItem.id, action.payload.newItem)
 
         },
@@ -46,13 +46,29 @@ export const todoSlice = createSlice({
             );
             state.selectedItems = [];
         },
+        closedSelectedItems(state) {
+            const selectedIds = state.selectedItems;
+            state.todoItems = state.todoItems.map(item => {
+                if (selectedIds.includes(item.id)) {
+                    return {
+                        ...item,
+                        status: 'closed',
+                        isClosed: true
+                    };
+                }
+                return item;
+            });
+            state.selectedItems = [];
+
+        },
         reorderItems: (state, action: PayloadAction<TodoItem[]>) => {
             state.todoItems = action.payload;
+            // console.log(state.todoItems);
         }
     },
 });
 
-export const { addTodoItem, removeTodoItem, deleteSelectedItems, toggleSelectedItem, addItemToParent, reorderItems } = todoSlice.actions
+export const { addTodoItem, removeTodoItem, deleteSelectedItems, toggleSelectedItem, addItemToParent, reorderItems, closedSelectedItems } = todoSlice.actions
 
 function removeItem(items: TodoItem[], id: string): void {
 
@@ -83,5 +99,7 @@ function addItem(items: TodoItem[], id: string, newItem: TodoItem): void {
 }
 
 export const todoItems = (state: RootState) => state.todo.todoItems;
+
+
 
 export default todoSlice.reducer

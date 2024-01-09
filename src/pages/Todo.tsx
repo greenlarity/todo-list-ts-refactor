@@ -4,6 +4,7 @@ import TodoHeader from '../components/Header/TodoHeader';
 import TodoCreate from '../components/Create/TodoCreate';
 import TodoList from '../components/TodoList/TodoList';
 import { useAppSelector } from '../hooks/hooks';
+import Footer from '../components/Footer/Footer';
 
 
 const Todo: React.FC = () => {
@@ -12,7 +13,8 @@ const Todo: React.FC = () => {
         <div className={styles.container}>
             <TodoHeader />
             <TodoCreate />
-            <TodoList todoItems={tasks} />
+                <TodoList todoItems={tasks} />
+            <Footer />
         </div>
     );
 };

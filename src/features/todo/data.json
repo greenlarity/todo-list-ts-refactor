@@ -1,12 +1,13 @@
 {
     "todoItems": [
-        {
-            "id": "Parent",
-            "title": "Parent",
-            "children": [
-            ]
-        }
+        {"id": "1", "title": "Task", "children": [
+            {"id": "2", "title": "Child_1", "children": [], "status": "opened"},
+            {"id": "3", "title": "Child_2", "children": [], "status": "opened"}
+        ], 
+        "status": "opened"},
+        {"id": "4", "title": "Task 2", "children": [], "status": "opened"}
     ],
-    "selectedItems": []
+    "selectedItems": [],
+    "closedItems": []
 }
 

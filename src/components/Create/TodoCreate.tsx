@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import styles from './create.module.scss';
 import { TodoItem } from '../../types';
-
 import { useAppDispatch } from '../../hooks/hooks';
 import { addTodoItem } from '../../features/todo/todoSlice';
+import { useSnackbar } from 'notistack';
+
 
 const TodoCreate: React.FC = () => {
     const [textValue, setTextValue] = useState<string>('');
     const dispatch = useAppDispatch();
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -16,13 +18,19 @@ const TodoCreate: React.FC = () => {
                 children: [],
                 id: Math.floor(Math.random() * 100).toString(),
                 title: textValue,
-                completed: false,
+                status: 'opened',
             }
             dispatch(addTodoItem(newItem))
             setTextValue('');
+            enqueueSnackbar('Task added successfully',
+                {
+                    variant: 'success',
+                    anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+                    style: { backgroundColor: '#00bfff', color: 'white' },
+                });
+
         }
         else { alert("Нельзя вводить пустой текст") }
-
     }
 
     const handleInput = (e: React.FormEvent<HTMLInputElement>): void => {
@@ -31,8 +39,9 @@ const TodoCreate: React.FC = () => {
 
     return (
         <>
+
             <form className={styles['create-wrapper']}
-            onSubmit={handleAddTodo}>
+                onSubmit={handleAddTodo}>
                 <input
                     className={styles['create-input']}
                     type="text"
